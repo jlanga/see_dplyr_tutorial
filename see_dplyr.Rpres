@@ -1,0 +1,437 @@
+Data wrangling with tidyr and dplyr
+========================================================
+author: Jorge Langa
+date: 20-01-2016
+
+Requirements
+========================================================
+
+This small tutorial requires you to have installed an R version equal or posterior to 3.1.2.
+
+To know which R version you are using just start R in a console or in Rstudio.
+
+The required packages are `tidyr` and `dplyr`.
+
+```{r, eval=FALSE}
+install.packages(
+  c('tidyr', 'dplyr')
+)
+```
+
+```{r, echo=FALSE}
+library("dplyr")
+library("tidyr")
+```
+
+What is tidy data?
+=============================================
+
+There is a paper on tidy data!
+
+![tidy data](img/tidy_data_paper.png)
+
+[link](http://www.jstatsoft.org/article/view/v059i10)
+
+
+
+What is tidy data?
+=============================================
+
+Tidy data is data organised in a way that:
+
+- Each variable is saved in its own column.
+
+- Each observation is saved in its own row.
+
+
+
+Is this clean data?
+==============================================
+
+```{r}
+raw_data <- data.frame(
+  name = c("Wilbur", "Petunia", "Gregory"),
+  a = c(67, 80, 64),
+  b = c(56, 90, 50)
+)
+```
+```{r, echo=F}
+raw_data
+```
+
+
+
+Is this now clean data?
+==============================================
+
+```{r, echo=F}
+raw_data %>%
+  gather(drug, heartrate, a:b)
+```
+
+Why do I need to tidy data?
+==============================================
+
+- Data comes always messy from the beginning.
+
+- Data cleaning is repetitive and boring.
+
+- Data that is messy is harder to analyse.
+
+- (Big) data processing with Excel can take too much time.
+
+
+
+The %>% (pipe) operator
+===============================================
+
+- Comes from the package `magrittr` and every modern package uses it.
+
+- Makes code more readable because it can be read as "send the results to" another function:
+
+  - A numeric function: `mean()`, `var()`, `princomp()`, `lm()`
+  
+  - A plot: `plot()`
+  
+  - A file: `write.csv()`
+
+
+
+%>% examples
+================================================
+
+```{r}
+raw_data$a %>% mean
+```
+
+```{r}
+iris[,c(1:4)] %>%
+  princomp()
+```
+
+
+
+%>% examples
+================================================
+
+```{r, fig.width = 12, fig.height = 4}
+iris[,c(1,2,3,4)] %>%
+  princomp() %>%
+  plot()
+```
+
+
+
+The %>% operator
+================================================
+
+- `%>%` sends your data to the first parameter by default.
+
+- To send it to another one, point it with a `.` (dot):
+
+```{r, eval=F}
+data %>%
+  lm(height ~ weight, data = .)
+```
+
+- Using the dot in the first parameter is equivalent to not using it
+
+```{r, eval=F}
+data %>% mean(., na.rm=T)
+data %>% mean(na.rm=T)
+```
+
+
+
+Why should I use such an ugly symbol?
+==========================================================================
+
+It makes your code more readable:
+
+As an example, take this nested chunk of code
+
+```{r, eval=FALSE}
+arrange(
+  summarize(
+    filter(data,
+           variable == numeric_value),
+           Total = sum(variable)
+    ),
+    desc(Total)
+)
+```
+
+???
+
+
+
+Why should I use such an ugly symbol?
+==========================================================================
+
+If we organize it a little bit using variables it has the following shape:
+
+```{r, eval=FALSE}
+a <- filter(data, variable == numeric_value)
+b <- summarise(a, Total = sum(variable))
+c <- arrange(b, desc(Total))
+```
+
+But with `%>%` we save time and memory:
+
+```{r, eval=FALSE}
+data %>%
+  filter(variable == numeric_value) %>%
+  summarise(Total = sum(variable)) %>%
+  arrange(desc(Total))
+```
+
+
+
+tidyr
+=======================================
+
+4 functions:
+
+- `gather()` and `spread()`
+
+- `separate` and `unite()`
+
+
+
+tidyr: gather
+=======================================
+
+Takes multiple columns, and gathers them into key-value pairs (makes data "longer"):
+
+```{r}
+long_data <- raw_data %>%
+  gather(drug, heartrate, a:b)
+
+long_data
+```
+
+
+
+tidyr: spread
+======================================
+
+Oposite as `gather`: convert "long" tables into "wider" ones by adding new columns:
+
+```{r}
+long_data %>%
+  spread(drug, heartrate)
+```
+
+tidyr: separate
+=======================================
+
+Sometimes there are multiple values in the same column:
+
+```{r, echo=FALSE}
+set.seed(10)
+tidier <- data.frame(
+  id = 1:4,
+  trt = sample(rep(c('control', 'treatment'), each = 2)),
+  work.T1 = runif(4),
+  home.T1 = runif(4),
+  work.T2 = runif(4),
+  home.T2 = runif(4)
+) %>%
+  gather(key, time, -id, -trt) %>%
+  head(8)
+```
+```{r}
+tidier
+```
+
+
+tidyr: separate
+=======================================
+
+`separate` splits those `location.Ttime` into `location` and `time`:
+
+```{r}
+separated <- tidier %>%
+  separate(key, into= c("location", "time"), sep="\\.")
+separated
+```
+
+
+
+tidyr: unite
+=======================================
+
+Combine two columns into one:
+
+```{r}
+separated %>%
+  unite(key, location, time, sep= ".")
+```
+
+
+
+dplyr: The fun part
+=======================================
+
+- Filtering of rows and columns: `select()` and `filter()`.
+
+- Agregation of data: `group_by()`, `summarise()`
+
+- Sort: `arrange()`.
+
+- Merge and intersect: `join()`.
+
+- Create new columns: `mutate()`.
+
+
+
+dplyr: select and rename columns and drop the others
+========================================
+
+```{r}
+DNase %>% head(2)
+DNase %>%
+  select(run = Run, density) %>%
+  head(3)
+```
+
+
+dplyr: filter rows by value
+==========================================
+```{r}
+DNase %>% head(2)
+DNase %>%
+  filter(conc > 0.5) %>%
+  head(3)
+```
+
+
+
+dplyr: group_by categorical values
+========================================
+
+```{r}
+DNase %>%
+  group_by(Run) %>%
+  head(3)
+```
+
+
+
+dplyr: summarise a group with a function
+================================================
+
+```{r}
+DNase %>%
+  group_by(Run) %>%
+  summarise(
+    mean_density = mean(density),
+    mean_conc    = mean(conc)) %>%
+  head(5)
+```
+
+
+
+dplyr: arrange by column
+=================================================
+
+```{r}
+DNase %>%
+  arrange(conc) %>%
+  head(2)
+DNase %>%
+  arrange(desc(conc)) %>%
+  head(3)
+```
+
+
+
+dplyr: join two tables by column names
+=================================================
+
+- ìnner_join: Include only rows in both x and y that have a matching value.
+
+- left_join: Include all of x, and matching rows of y.
+
+- semi_join: Include rows of x that match y but only keep the columns from x.
+
+
+
+`dplyr`: `join` two tables by column names
+=================================================
+```{r}
+x <- data.frame(
+  name= c("John", "Paul", "George", "Ringo", "Stuart", "Pete"),
+  instrument= c("guitar", "bass", "guitar", "drums", "bass", "drums")
+)
+
+y <- data.frame(
+    name= c("John", "Paul", "George", "Ringo", "Brian"),
+    band= c(T, T, T, T, F)
+)
+```
+
+
+
+dplyr: join two tables by column names
+===============================================
+
+```{r}
+x %>%
+  inner_join(y)
+```
+
+
+
+dplyr: mutate can create new variables
+================================================
+
+```{r}
+women %>%
+  mutate(
+    z_height = mean(height) / var(height),
+    z_weight = mean(weight) / var(weight)) %>%
+  head(5)
+```
+
+
+
+Exercise: Liver expression in Zebrafish
+=================================================
+
+1. Load the `liver_3.gff` first 7 columns into R.
+
+2. Compute how many transcripts are expressed in the 1st chromosome.
+
+3. Compute how many transcripts are expressed in the + strand for each chromosome, in descending order.
+
+4. Compute in which strand is the longest transcript.
+
+5. Plot the mean exon length in the first ten chromosomes.
+
+Wrapping up
+=================================================
+
+- Code is more readable with `%>%`
+
+- Data tidying is easy to do.
+
+- Tidy data is easy to analyse.
+
+- Tidy data is less time consuming for you and your laptop.
+
+- No `for`, `$`, `[[]]` and `[]` are required.
+
+
+
+
+Resources
+=================================================
+
+Hadley Wickham’s dplyr tutorial at useR! 2014, [Part 1]()
+
+Hadley Wickham’s dplyr tutorial at useR! 2014, [Part 2]()
+
+[Introduction to dplyr for Faster Data Manipulation in R](https://rpubs.com/justmarkham/dplyr-tutorial).
+
+Data Wrangling Cheatsheet [pdf](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
