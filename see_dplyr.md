@@ -43,7 +43,7 @@ Tidy data is data organised in a way that:
 
 
 
-Is this clean data?
+Is this tidy data?
 ==============================================
 
 
@@ -64,7 +64,7 @@ raw_data <- data.frame(
 
 
 
-Is this now clean data?
+Is this now tidy data?
 ==============================================
 
 

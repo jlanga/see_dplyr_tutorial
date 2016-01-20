@@ -45,7 +45,7 @@ Tidy data is data organised in a way that:
 
 
 
-Is this clean data?
+Is this tidy data?
 ==============================================
 
 ```{r}
@@ -61,7 +61,7 @@ raw_data
 
 
 
-Is this now clean data?
+Is this now tidy data?
 ==============================================
 
 ```{r, echo=F}
