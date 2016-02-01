@@ -83,11 +83,9 @@ Why do I need to tidy data?
 
 - Data comes always messy from the beginning.
 
-- Data cleaning is repetitive and boring.
+- Tidy data is easier to process.
 
-- Data that is messy is harder to analyse.
-
-- (Big) data processing with Excel can take too much time.
+- (Big) data processing with Excel can take too much time, even using macros.
 
 
 
@@ -228,7 +226,7 @@ tidyr
 
 - `gather()` and `spread()`
 
-- `separate` and `unite()`
+- `separate()` and `unite()`
 
 
 
@@ -513,7 +511,7 @@ dplyr: join two tables by column names
 
 
 
-`dplyr`: `join` two tables by column names
+dplyr: join two tables by column names
 =================================================
 
 ```r
@@ -556,18 +554,18 @@ dplyr: mutate can create new variables
 ```r
 women %>%
   mutate(
-    z_height = mean(height) / var(height),
-    z_weight = mean(weight) / var(weight)) %>%
+    z_height = (height - mean(height)) / sd(height),
+    z_weight = (weight - mean(weight)) / sd(weight)) %>%
   head(5)
 ```
 
 ```
-  height weight z_height  z_weight
-1     58    115     3.25 0.5692253
-2     59    117     3.25 0.5692253
-3     60    120     3.25 0.5692253
-4     61    123     3.25 0.5692253
-5     62    126     3.25 0.5692253
+  height weight   z_height   z_weight
+1     58    115 -1.5652476 -1.4022687
+2     59    117 -1.3416408 -1.2732255
+3     60    120 -1.1180340 -1.0796608
+4     61    123 -0.8944272 -0.8860962
+5     62    126 -0.6708204 -0.6925315
 ```
 
 
@@ -596,7 +594,7 @@ Wrapping up
 
 - Tidy data is less time consuming for you and your laptop.
 
-- No `for`, `$`, `[[]]` and `[]` are required.
+- No more `for`, `$`, `[[]]` and `[]`.
 
 
 

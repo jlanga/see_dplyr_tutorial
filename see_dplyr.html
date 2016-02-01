@@ -872,9 +872,8 @@ hljs.initHighlightingOnLoad();
 <div class="slideContent" >
 <ul>
 <li><p>Data comes always messy from the beginning.</p></li>
-<li><p>Data cleaning is repetitive and boring.</p></li>
-<li><p>Data that is messy is harder to analyse.</p></li>
-<li><p>(Big) data processing with Excel can take too much time.</p></li>
+<li><p>Tidy data is easier to process.</p></li>
+<li><p>(Big) data processing with Excel can take too much time, even using macros.</p></li>
 </ul>
 
 </div>
@@ -1009,7 +1008,7 @@ c &lt;- arrange(b, desc(Total))
 
 <ul>
 <li><p><code>gather()</code> and <code>spread()</code></p></li>
-<li><p><code>separate</code> and <code>unite()</code></p></li>
+<li><p><code>separate()</code> and <code>unite()</code></p></li>
 </ul>
 
 </div>
@@ -1275,7 +1274,7 @@ Groups: Run [1]
 
 </section>
 <section data-transition="linear" data-transition-speed="default">
-<h3>`dplyr`: `join` two tables by column names</h3>
+<h3>dplyr: join two tables by column names</h3>
 <div class="slideContent" >
 <pre><code class="r">x &lt;- data.frame(
   name= c(&quot;John&quot;, &quot;Paul&quot;, &quot;George&quot;, &quot;Ringo&quot;, &quot;Stuart&quot;, &quot;Pete&quot;),
@@ -1313,17 +1312,17 @@ y &lt;- data.frame(
 <div class="slideContent" >
 <pre><code class="r">women %&gt;%
   mutate(
-    z_height = mean(height) / var(height),
-    z_weight = mean(weight) / var(weight)) %&gt;%
+    z_height = (height - mean(height)) / sd(height),
+    z_weight = (weight - mean(weight)) / sd(weight)) %&gt;%
   head(5)
 </code></pre>
 
-<pre><code>  height weight z_height  z_weight
-1     58    115     3.25 0.5692253
-2     59    117     3.25 0.5692253
-3     60    120     3.25 0.5692253
-4     61    123     3.25 0.5692253
-5     62    126     3.25 0.5692253
+<pre><code>  height weight   z_height   z_weight
+1     58    115 -1.5652476 -1.4022687
+2     59    117 -1.3416408 -1.2732255
+3     60    120 -1.1180340 -1.0796608
+4     61    123 -0.8944272 -0.8860962
+5     62    126 -0.6708204 -0.6925315
 </code></pre>
 
 </div>
@@ -1351,7 +1350,7 @@ y &lt;- data.frame(
 <li><p>Data tidying is easy to do.</p></li>
 <li><p>Tidy data is easy to analyse.</p></li>
 <li><p>Tidy data is less time consuming for you and your laptop.</p></li>
-<li><p>No <code>for</code>, <code>$</code>, <code>[[]]</code> and <code>[]</code> are required.</p></li>
+<li><p>No more <code>for</code>, <code>$</code>, <code>[[]]</code> and <code>[]</code>.</p></li>
 </ul>
 
 </div>
